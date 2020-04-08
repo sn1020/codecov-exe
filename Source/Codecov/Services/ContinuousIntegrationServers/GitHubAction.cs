@@ -6,12 +6,17 @@ namespace Codecov.Services.ContinuousIntegrationServers
     internal class GitHubAction : ContinuousIntegrationServer
     {
         private readonly Lazy<string> _branch = new Lazy<string>(LoadBranch);
+        private readonly Lazy<string> _build = new Lazy<string>(() => EnviornmentVariable.GetEnviornmentVariable("GITHUB_RUN_ID"));
         private readonly Lazy<string> _commit = new Lazy<string>(() => EnviornmentVariable.GetEnviornmentVariable("GITHUB_SHA"));
         private readonly Lazy<bool> _detecter = new Lazy<bool>(() => CheckEnvironmentVariables("GITHUB_ACTIONS") || !string.IsNullOrWhiteSpace(EnviornmentVariable.GetEnviornmentVariable("GITHUB_ACTION")));
         private readonly Lazy<string> _pr = new Lazy<string>(LoadPullRequest);
         private readonly Lazy<string> _slug = new Lazy<string>(() => EnviornmentVariable.GetEnviornmentVariable("GITHUB_REPOSITORY"));
 
         public override string Branch => _branch.Value;
+
+        public override string Build => _build.Value;
+
+        public override string BuildUrl => LoadBuildUrl();
 
         public override string Commit => _commit.Value;
 
@@ -80,6 +85,16 @@ namespace Codecov.Services.ContinuousIntegrationServers
             }
 
             return ExtractSubstring(branchRef, "refs/pull/", "/merge");
+        }
+
+        private string LoadBuildUrl()
+        {
+            if (string.IsNullOrWhiteSpace(Slug) || string.IsNullOrWhiteSpace(Build))
+            {
+                return string.Empty;
+            }
+
+            return $"https://github.com/{Slug}/actions/runs/{Build}";
         }
     }
 }
