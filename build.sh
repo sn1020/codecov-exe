@@ -113,10 +113,5 @@ if [ ! -f "$CAKE_EXE" ]; then
     exit 1
 fi
 
-if [ -d "/opt/dotnet/sdk" ]; then
-  # Make sure that .net tools can discover the .net core sdk
-  export DOTNET_ROOT="/opt/dotnet"
-fi
-
 # Start Cake
-(exec mono "$CAKE_EXE" $SCRIPT --bootstrap) && (exec mono "$CAKE_EXE" $SCRIPT "${CAKE_ARGUMENTS[@]}")
+exec mono "$CAKE_EXE" $SCRIPT "${CAKE_ARGUMENTS[@]}"

@@ -176,7 +176,7 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
     ($md5Hash -ne (Get-Content $PACKAGES_CONFIG_MD5 ))) {
         Write-Verbose -Message "Missing or changed package.config hash..."
         Get-ChildItem -Exclude packages.config,nuget.exe,Cake.Bakery |
-        Remove-Item -Recurse
+        Remove-Item -Recurse -Force
     }
 
     Write-Verbose -Message "Restoring tools from NuGet..."
@@ -240,21 +240,17 @@ $CAKE_EXE_INVOCATION = if ($IsLinux -or $IsMacOS) {
     "`"$CAKE_EXE`""
 }
 
-
-# Build Cake arguments
-$cakeArguments = @("$Script");
-if ($Target) { $cakeArguments += "-target=$Target" }
+ # Build an array (not a string) of Cake arguments to be joined later
+$cakeArguments = @()
+if ($Script) { $cakeArguments += "`"$Script`"" }
+if ($Target) { $cakeArguments += "-target=`"$Target`"" }
 if ($Configuration) { $cakeArguments += "-configuration=$Configuration" }
 if ($Verbosity) { $cakeArguments += "-verbosity=$Verbosity" }
 if ($ShowDescription) { $cakeArguments += "-showdescription" }
 if ($DryRun) { $cakeArguments += "-dryrun" }
 $cakeArguments += $ScriptArgs
 
-# Bootstrap Cake
-Invoke-Expression "& $CAKE_EXE_INVOCATION $Script --bootstrap"
-if ($LASTEXITCODE -eq 0) {
-    # Start Cake
-    Write-Host "Running build script..."
-    Invoke-Expression "& $CAKE_EXE_INVOCATION $($cakeArguments -join " ")"
-}
+# Start Cake
+Write-Host "Running build script..."
+Invoke-Expression "& $CAKE_EXE_INVOCATION $($cakeArguments -join " ")"
 exit $LASTEXITCODE
