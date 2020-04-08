@@ -63,11 +63,27 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
             commit.Should().Be("123");
         }
 
+        [Theory, InlineData(null), InlineData(""), InlineData("    ")]
+        public void Detecter_Should_Be_False_When_Action_Environment_Variable_Is_Null_Or_Empty(string environmentData)
+        {
+            // Given
+            Environment.SetEnvironmentVariable("GITHUB_ACTION", environmentData);
+            Environment.SetEnvironmentVariable("GITHUB_ACTIONS", null);
+            var githubAction = new GitHubAction();
+
+            // When
+            var detecter = githubAction.Detecter;
+
+            // Then
+            detecter.Should().BeFalse();
+        }
+
         [Theory, InlineData(null), InlineData(""), InlineData("False"), InlineData("false"), InlineData("foo")]
-        public void Detecter_Should_Be_False_When_Actions_Environment_Variable_Does_Not_Exist_Or_Is_Not_True(string environmentData)
+        public void Detecter_Should_Be_False_When_Actions_And_Action_Environment_Variable_Does_Not_Exist_Or_Is_Not_True(string environmentData)
         {
             // Given
             Environment.SetEnvironmentVariable("GITHUB_ACTIONS", environmentData);
+            Environment.SetEnvironmentVariable("GITHUB_ACTION", null);
             var githubActions = new GitHubAction();
 
             // When
@@ -75,6 +91,20 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
 
             // Then
             detecter.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Detecter_Should_Be_True_When_Action_Environment_Variable_Exist_And_Is_Not_Empty()
+        {
+            // Given
+            Environment.SetEnvironmentVariable("GITHUB_ACTION", "my-awesome-github-action");
+            var githubActions = new GitHubAction();
+
+            // When
+            var detecter = githubActions.Detecter;
+
+            // Then
+            detecter.Should().BeTrue();
         }
 
         [Theory, InlineData("True"), InlineData("true")]
@@ -89,6 +119,23 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
 
             // Then
             detecter.Should().BeTrue();
+        }
+
+        public void Dispose()
+        {
+            // We will remove all environment variables that could have been set during unit test
+            var envVariable = new[]
+            {
+                "GITHUB_REF",
+                "GITHUB_SHA",
+                "GITHUB_ACTIONS",
+                "GITHUB_REPOSITORY"
+            };
+
+            foreach (var variable in envVariable)
+            {
+                Environment.SetEnvironmentVariable(variable, null);
+            }
         }
 
         [Fact]
@@ -130,23 +177,6 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
 
             // Then
             slug.Should().Be("foo/bar");
-        }
-
-        public void Dispose()
-        {
-            // We will remove all environment variables that could have been set during unit test
-            var envVariable = new[]
-            {
-                "GITHUB_REF",
-                "GITHUB_SHA",
-                "GITHUB_ACTIONS",
-                "GITHUB_REPOSITORY"
-            };
-
-            foreach (var variable in envVariable)
-            {
-                Environment.SetEnvironmentVariable(variable, null);
-            }
         }
     }
 }

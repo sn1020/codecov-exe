@@ -7,7 +7,7 @@ namespace Codecov.Services.ContinuousIntegrationServers
     {
         private readonly Lazy<string> _branch = new Lazy<string>(LoadBranch);
         private readonly Lazy<string> _commit = new Lazy<string>(() => EnviornmentVariable.GetEnviornmentVariable("GITHUB_SHA"));
-        private readonly Lazy<bool> _detecter = new Lazy<bool>(() => CheckEnvironmentVariables("GITHUB_ACTIONS"));
+        private readonly Lazy<bool> _detecter = new Lazy<bool>(() => CheckEnvironmentVariables("GITHUB_ACTIONS") || !string.IsNullOrWhiteSpace(EnviornmentVariable.GetEnviornmentVariable("GITHUB_ACTION")));
         private readonly Lazy<string> _slug = new Lazy<string>(() => EnviornmentVariable.GetEnviornmentVariable("GITHUB_REPOSITORY"));
 
         public override string Branch => _branch.Value;
