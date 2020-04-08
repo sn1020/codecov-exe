@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Codecov.Services.ContinuousIntegrationServers;
+using Codecov.Utilities;
 
 namespace Codecov.Coverage.EnviornmentVariables
 {
@@ -26,7 +27,7 @@ namespace Codecov.Coverage.EnviornmentVariables
             var enviornmentVariables = new Dictionary<string, string>(ContinuousIntegrationServer.GetEnviornmentVariables);
 
             const string codecovName = "CODECOV_ENV";
-            var codecovValue = Environment.GetEnvironmentVariable(codecovName);
+            var codecovValue = EnviornmentVariable.GetEnviornmentVariable(codecovName);
             if (!string.IsNullOrWhiteSpace(codecovValue) && !enviornmentVariables.ContainsKey(codecovName))
             {
                 enviornmentVariables[codecovName] = codecovValue;
@@ -40,13 +41,13 @@ namespace Codecov.Coverage.EnviornmentVariables
                     continue;
                 }
 
-                var value = Environment.GetEnvironmentVariable(enviornmentVariableName);
+                var value = EnviornmentVariable.GetEnviornmentVariable(enviornmentVariableName);
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     continue;
                 }
 
-                enviornmentVariables[enviornmentVariableName] = Environment.GetEnvironmentVariable(enviornmentVariableName);
+                enviornmentVariables[enviornmentVariableName] = EnviornmentVariable.GetEnviornmentVariable(enviornmentVariableName);
             }
 
             return enviornmentVariables;

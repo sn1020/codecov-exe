@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -213,7 +213,7 @@ namespace Codecov.Url
                 }
             }
 
-            var slugEnv = Environment.GetEnvironmentVariable("CODECOV_SLUG");
+            var slugEnv = EnviornmentVariable.GetEnviornmentVariable("CODECOV_SLUG");
             if (!string.IsNullOrWhiteSpace(slugEnv))
             {
                 QueryParameters["slug"] = WebUtility.UrlEncode(slugEnv.Trim());
@@ -245,7 +245,7 @@ namespace Codecov.Url
         {
             QueryParameters["token"] = string.Empty;
 
-            var tokenEnv = Environment.GetEnvironmentVariable("CODECOV_TOKEN");
+            var tokenEnv = EnviornmentVariable.GetEnviornmentVariable("CODECOV_TOKEN");
             if (!string.IsNullOrWhiteSpace(tokenEnv))
             {
                 QueryParameters["token"] = tokenEnv.RemoveAllWhiteSpace();

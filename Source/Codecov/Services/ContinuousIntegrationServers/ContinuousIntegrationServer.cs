@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Codecov.Utilities;
@@ -64,7 +64,7 @@ namespace Codecov.Services.ContinuousIntegrationServers
                 return;
             }
 
-            var value = Environment.GetEnvironmentVariable(name);
+            var value = EnviornmentVariable.GetEnviornmentVariable(name);
             if (string.IsNullOrWhiteSpace(value))
             {
                 return;

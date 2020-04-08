@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using Codecov.Utilities;
 
 namespace Codecov.Url
 {
@@ -25,7 +26,7 @@ namespace Codecov.Url
             }
 
             // Try to get it from enviornment variable else just use default url.
-            var urlEnv = Environment.GetEnvironmentVariable("CODECOV_URL");
+            var urlEnv = EnviornmentVariable.GetEnviornmentVariable("CODECOV_URL");
             return !string.IsNullOrWhiteSpace(urlEnv) ? urlEnv.Trim().TrimEnd('/') : "https://codecov.io";
         }
     }
