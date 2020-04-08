@@ -31,6 +31,7 @@ public static void SetToolPath(ICakeContext context, CodecovSettings settings)
 ((CakeTask)BuildParameters.Tasks.UploadCodecovReportTask.Task).Criterias.Clear();
 
 var isRunningOnTravisCi = BuildSystem.IsRunningOnTravisCI;
+var isRunningOnGithubActions = string.Equals(EnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase) || !string.IsNullOrEmpty(EnvironmentVariable("GITHUB_ACTION"));
 
 public bool CanPublishToCodecov
 {
@@ -38,7 +39,7 @@ public bool CanPublishToCodecov
     {
         return BuildParameters.ShouldRunCodecov &&
                 (!string.IsNullOrEmpty(BuildParameters.Codecov.RepoToken) ||
-                BuildParameters.IsRunningOnAppVeyor || isRunningOnTravisCi);
+                BuildParameters.IsRunningOnAppVeyor || isRunningOnTravisCi || isRunningOnGithubActions);
     }
 }
 
