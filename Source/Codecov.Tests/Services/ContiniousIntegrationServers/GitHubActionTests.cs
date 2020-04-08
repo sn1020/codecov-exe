@@ -12,6 +12,7 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
         {
             // Given
             Environment.SetEnvironmentVariable("GITHUB_REF", null);
+            Environment.SetEnvironmentVariable("GITHUB_HEAD_REF", null);
             var githubAction = new GitHubAction();
 
             // When
@@ -22,10 +23,26 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
         }
 
         [Fact]
+        public void Branch_Should_Be_Set_From_Head_Ref_When_Environment_Variable_Exist()
+        {
+            // Given
+            Environment.SetEnvironmentVariable("GITHUB_REF", "refs/pull/234/merge");
+            Environment.SetEnvironmentVariable("GITHUB_HEAD_REF", "develop");
+            var githubAction = new GitHubAction();
+
+            // When
+            var branch = githubAction.Branch;
+
+            // Then
+            branch.Should().Be("develop");
+        }
+
+        [Fact]
         public void Branch_Should_Be_Set_When_Enviornment_Variable_Exits()
         {
             // Given
-            Environment.SetEnvironmentVariable("GITHUB_REF", "ref/heads/develop");
+            Environment.SetEnvironmentVariable("GITHUB_REF", "refs/heads/develop");
+            Environment.SetEnvironmentVariable("GITHUB_HEAD_REF", null);
             var githubAction = new GitHubAction();
 
             // When
@@ -129,6 +146,8 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
                 "GITHUB_REF",
                 "GITHUB_SHA",
                 "GITHUB_ACTIONS",
+                "GITHUB_ACTION",
+                "GITHUB_HEAD_REF",
                 "GITHUB_REPOSITORY"
             };
 
@@ -136,6 +155,37 @@ namespace Codecov.Tests.Services.ContiniousIntegrationServers
             {
                 Environment.SetEnvironmentVariable(variable, null);
             }
+        }
+
+        [Fact]
+        public void PR_Should_Not_Be_Empty_When_Environment_Variables_Exist()
+        {
+            // Given
+            Environment.SetEnvironmentVariable("GITHUB_HEAD_REF", "patch-2");
+            Environment.SetEnvironmentVariable("GITHUB_REF", "refs/pull/7/merge");
+            var githubAction = new GitHubAction();
+
+            // When
+            var pr = githubAction.Pr;
+            var branch = githubAction.Branch;
+
+            // Then
+            pr.Should().Be("7");
+            branch.Should().Be("patch-2");
+        }
+
+        [Theory, InlineData(null), InlineData(""), InlineData("   ")]
+        public void PR_Should_Not_be_Set_If_Head_Ref_Is_Empyt(string environmentData)
+        {
+            // Given
+            Environment.SetEnvironmentVariable("GITHUB_HEAD_REF", environmentData);
+            var githubAction = new GitHubAction();
+
+            // When
+            var pr = githubAction.Pr;
+
+            // THen
+            pr.Should().BeEmpty();
         }
 
         [Fact]
