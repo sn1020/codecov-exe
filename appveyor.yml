@@ -39,4 +39,6 @@ build_script:
     - ps: .\build.ps1 --target=AppVeyor
     - sh: ./build.sh --target=AppVeyor
 
-cache: tools -> setup.cake,appveyor.yml,tools/packages.config
+cache:
+    - tools -> build.config,.build/*.cake
+    - .dotnet -> build.config
