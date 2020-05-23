@@ -43,7 +43,7 @@ var coverageTask = Task("Upload-CoverageReport")
     var exePrefix = IsRunningOnWindows() ? ".exe" : "";
 
     Codecov(new CodecovSettings {
-        Files = new[] { "./Source/*.Tests/TestResults/**/*.xml"},
+        Files = new[] { "Source/*.Tests/TestResults/**/*.xml"},
         ToolPath = File($"./Source/Codecov.Tool/bin/{configuration}/netcoreapp3.0/codecov{exePrefix}"),
         Verbose = true,
     });
