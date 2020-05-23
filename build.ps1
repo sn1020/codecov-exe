@@ -92,7 +92,7 @@ if ($true -eq $INSTALL_NETCORE) {
     $env:PATH = "$SCRIPT_DIR/.dotnet${PathSep}${env:PATH}"
     $env:DOTNET_ROOT = "$SCRIPT_DIR/.dotnet"
 
-    $DOTNET_EXE = Get-ChildItem -Path "$SCRIPT_DIR/.dotnet" -Filter "dotnet*" | select -First 1 -Expand FullName
+    $DOTNET_EXE = Get-ChildItem -Path "$SCRIPT_DIR/.dotnet/dotnet*" -Exclude "*.ps1" | select -First 1 -Expand FullName
 
 }
 elseif (Test-Path "/opt/dotnet/sdk" -ea 0) {
