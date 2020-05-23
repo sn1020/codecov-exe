@@ -40,5 +40,5 @@ build_script:
     - sh: ./build.sh --target=AppVeyor
 
 cache:
-    - tools -> build.config,.build/*.cake
+    - tools -> build.config,.build\*.cake
     - .dotnet -> build.config
