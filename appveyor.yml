@@ -12,7 +12,7 @@ environment:
 for:
 - matrix:
     only:
-      - image: Ubuntu
+    - image: Ubuntu
   environment:
     NUGET_API_KEY:
       secure: koMAZYSTMVgMKHVVuyfoyVsqyFJc7KQ7UpmNixgflGJC0Mo6CQa8S5cQfbXaBXTH
@@ -22,7 +22,7 @@ for:
     NUGET_SOURCE: https://www.nuget.org/api/v2/package
 - matrix:
     only:
-      - image: Visual Studio 2019
+    - image: Visual Studio 2019
   environment:
     APPVEYOR_API_TOKEN:
       secure: QHpexV7pcFPNcXT0clrRuSDwDXXXI6oxFwBw5NDIRRg=
@@ -32,6 +32,7 @@ for:
 
 install:
 - sh: sudo apt-get update && sudo apt-get install -y libgit2-dev
+- sh: mono --version
 
 build_script:
 - ps: .\build.ps1 -Target AppVeyor
